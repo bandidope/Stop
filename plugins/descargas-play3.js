@@ -1,204 +1,64 @@
-import fetch from 'node-fetch';
+import fetch from "node-fetch"
+import yts from 'yt-search'
 
-const isUrl = (text) => /^https?:\/\/(www\.)?(youtube\.com|youtu\.be)\/[^\s]+$/i.test(text)
+const handler = async (m, { conn, text, usedPrefix, command }) => {
+    if (!text) return conn.reply(m.chat, `*Ingrese nombre o link*\n\n*Ejemplo:* ${usedPrefix}${command} Yan Block 444`, m)
 
-const handler = async (m, { conn, text }) => {
-  if (!text) {
-    await conn.sendMessage(m.chat, { react: { text: '⚠️', key: m.key } });
+    const isVideo = command === 'play2'
+    await m.react(isVideo ? '🎥' : '🎧')
 
-    return m.reply(`
-  ╭─ׅ─ׅ┈ ─๋︩︪─❖─๋︩︪─┈─ׅ─ׅ╮
-╭╼☁️ 𝐘𝐎𝐔𝐓𝐔𝐁𝐄 𝐏𝐋𝐀𝐘 ☁️╮
-┃֪࣪
-├ׁ̟̇❍✎ Ingresa el nombre de la música
-├ׁ̟̇❍✎ Ej: play imagine dragons
-╰─ׅ─ׅ┈ ─๋︩︪─❖─๋︩︪─┈─ׅ─ׅ╯
-`.trim());
-  }
+    try {
+        let videoUrl = text
+        let duration = ''
 
-  try {
-    await conn.sendMessage(m.chat, { react: { text: '⏳', key: m.key } });
+        if (!text.match(/youtu/gi)) {
+            const search = await yts(text)
+            if (!search.all.length) {
+                await m.react('❌')
+                return m.reply('❌ Sin resultados')
+            }
+            videoUrl = search.videos[0].url
+            duration = search.videos[0].timestamp
+        }
 
-    let link, title = 'YouTube', channel = '-', duration = '-', imageUrl = null
+        const endpoint = isVideo ? 'ytmp4' : 'ytmp3'
+        const apiUrl = `https://api.delirius.store/download/${endpoint}?url=${encodeURIComponent(videoUrl)}${isVideo ? '&format=360p' : ''}`
+        
+        const res = await fetch(apiUrl)
+        const json = await res.json()
 
-    if (isUrl(text)) {
-      link = text
+        if (!json.status || !json.data) {
+            await m.react('❌')
+            return m.reply('⚠️ Error API')
+        }
 
-      const res = await fetch(`${api.url}/search/youtube?q=${encodeURIComponent(text)}&apikey=${api.key}`);
-      const json = await res.json();
+        const { title, author, image, download } = json.data
 
-      if (json.status && json.result?.length) {
-        const data = json.result[0]
-        title = data.title
-        channel = data.channel
-        duration = data.duration
-        imageUrl = data.imageUrl
-      }
-    } else {
-      const res = await fetch(`${api.url}/search/youtube?q=${encodeURIComponent(text)}&apikey=${api.key}`);
-      const json = await res.json();
+        let info = `📌 *${title}*\n👤 *${author}*\n⏱️ *${duration}*\n📦 *${isVideo ? 'MP4' : 'MP3'}*\n\n*By: Whois Developer*`
 
-      if (!json.status || !json.result?.length) {
-        await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } });
+        if (isVideo) {
+            await conn.sendMessage(m.chat, { 
+                video: { url: download }, 
+                caption: info,
+                mimetype: 'video/mp4'
+            }, { quoted: m })
+        } else {
+            await conn.sendMessage(m.chat, { image: { url: image }, caption: info }, { quoted: m })
+            await conn.sendMessage(m.chat, { 
+                audio: { url: download }, 
+                mimetype: 'audio/mpeg',
+                fileName: `${title}.mp3`
+            }, { quoted: m })
+        }
 
-        return m.reply(`
-  ╭─ׅ─ׅ┈ ─๋︩︪─❖─๋︩︪─┈─ׅ─ׅ╮
-╭╼☁️ 𝐒𝐈𝐍 𝐑𝐄𝐒𝐔𝐋𝐓𝐀𝐃𝐎𝐒 ☁️╮
-┃֪࣪
-├ׁ̟̇❍✎ No se encontró coincidencia
-├ׁ̟̇❍✎ Intenta otro nombre
-╰─ׅ─ׅ┈ ─๋︩︪─❖─๋︩︪─┈─ׅ─ׅ╯
-`.trim());
-      }
+        await m.react('✅')
 
-      const data = json.result[0]
-      link = data.link
-      title = data.title
-      channel = data.channel
-      duration = data.duration
-      imageUrl = data.imageUrl
+    } catch (e) {
+        await m.react('❌')
+        conn.reply(m.chat, '🛑 Error', m)
     }
+}
 
-    const caption = `
-  ╭─ׅ─ׅ┈ ─๋︩︪─❖─๋︩︪─┈─ׅ─ׅ╮
-╭╼☁️ 𝐘𝐎𝐔𝐓𝐔𝐁𝐄 ☁️╮
-┃֪࣪
-├ׁ̟̇❍✎ ❖ ${title}
-├ׁ̟̇❍✎ ✿ Canal: ${channel}
-├ׁ̟̇❍✎ ⏱️ Duración: ${duration}
-┃֪࣪
-├ׁ̟̇❍✎ 🔗 Link:
-├ׁ̟̇❍✎ ${link}
-╰─ׅ─ׅ┈ ─๋︩︪─❖─๋︩︪─┈─ׅ─ׅ╯
+handler.command = ['play']
 
-✰ Selecciona una opción
-`.trim();
-
-    let message = {
-      caption,
-      buttons: [
-        { buttonId: `audio_${link}`, buttonText: { displayText: '❖ AUDIO' }, type: 1 },
-        { buttonId: `video_${link}`, buttonText: { displayText: '❖ VIDEO' }, type: 1 }
-      ],
-      headerType: 4
-    }
-
-    if (imageUrl) {
-      const thumb = await (await fetch(imageUrl)).buffer()
-      message.image = thumb
-    }
-
-    await conn.sendMessage(m.chat, message, { quoted: m });
-
-  } catch (e) {
-    await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } });
-
-    m.reply(`
-  ╭─ׅ─ׅ┈ ─๋︩︪─❖─๋︩︪─┈─ׅ─ׅ╮
-╭╼☁️ 𝐄𝐑𝐑𝐎𝐑 ☁️╮
-┃֪࣪
-├ׁ̟̇❍✎ No se pudo procesar la solicitud
-├ׁ̟̇❍✎ Intenta nuevamente
-╰─ׅ─ׅ┈ ─๋︩︪─❖─๋︩︪─┈─ׅ─ׅ╯
-`.trim());
-  }
-};
-
-handler.before = async (m, { conn }) => {
-  const id = m.message?.buttonsResponseMessage?.selectedButtonId;
-  if (!id) return;
-
-  try {
-
-    if (id.startsWith('audio_')) {
-      const link = id.replace('audio_', '');
-
-      await conn.sendMessage(m.chat, { react: { text: '⏳', key: m.key } });
-
-      const res = await fetch(`${api.url}/download/audio?url=${encodeURIComponent(link)}&apikey=${api.key}`);
-      const json = await res.json();
-
-      if (!json.status || !json.result?.url) {
-        await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } });
-
-        return m.reply(`
-  ╭─ׅ─ׅ┈ ─๋︩︪─❖─๋︩︪─┈─ׅ─ׅ╮
-╭╼☁️ 𝐀𝐔𝐃𝐈𝐎 ☁️╮
-┃֪࣪
-├ׁ̟̇❍✎ No disponible
-├ׁ̟̇❍✎ Intenta otro video
-╰─ׅ─ׅ┈ ─๋︩︪─❖─๋︩︪─┈─ׅ─ׅ╯
-`.trim());
-      }
-
-      const data = json.result;
-
-      await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } });
-
-      await conn.sendMessage(m.chat, {
-        audio: { url: data.url },
-        mimetype: 'audio/mpeg',
-        fileName: `${(data.title || 'audio').replace(/[^\w\s]/gi, '')}.mp3`,
-        caption: `
-  ╭─ׅ─ׅ┈ ─๋︩︪─❖─๋︩︪─┈─ׅ─ׅ╮
-╭╼☁️ 𝐀𝐔𝐃𝐈𝐎 ☁️╮
-┃֪࣪
-├ׁ̟̇❍✎ ${data.title || 'Audio'}
-├ׁ̟̇❍✎ ⏱️ ${data.info?.duration || 'Desconocido'}
-├ׁ̟̇❍✎ ⚡ ${data.quality} kbps
-╰─ׅ─ׅ┈ ─๋︩︪─❖─๋︩︪─┈─ׅ─ׅ╯
-`.trim()
-      }, { quoted: m });
-    }
-
-    if (id.startsWith('video_')) {
-      const link = id.replace('video_', '');
-
-      await conn.sendMessage(m.chat, { react: { text: '⏳', key: m.key } });
-
-      const res = await fetch(`${api.url}/download/ytdown?url=${encodeURIComponent(link)}&apikey=${api.key}`);
-      const json = await res.json();
-
-      if (!json.status || !json.result?.url) {
-        await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } });
-
-        return m.reply(`
-  ╭─ׅ─ׅ┈ ─๋︩︪─❖─๋︩︪─┈─ׅ─ׅ╮
-╭╼☁️ 𝐕𝐈𝐃𝐄𝐎 ☁️╮
-┃֪࣪
-├ׁ̟̇❍✎ No disponible
-╰─ׅ─ׅ┈ ─๋︩︪─❖─๋︩︪─┈─ׅ─ׅ╯
-`.trim());
-      }
-
-      const data = json.result;
-
-      await conn.sendMessage(m.chat, { react: { text: '✅', key: m.key } });
-
-      await conn.sendMessage(m.chat, {
-        video: { url: data.url },
-        fileName: `${(data.title || 'video').replace(/[^\w\s]/gi, '')}.mp4`,
-        mimetype: 'video/mp4'
-      }, { quoted: m });
-    }
-
-  } catch {
-    await conn.sendMessage(m.chat, { react: { text: '❌', key: m.key } });
-
-    m.reply(`
-  ╭─ׅ─ׅ┈ ─๋︩︪─❖─๋︩︪─┈─ׅ─ׅ╮
-╭╼☁️ 𝐄𝐑𝐑𝐎𝐑 ☁️╮
-┃֪࣪
-├ׁ̟̇❍✎ Fallo inesperado
-├ׁ̟̇❍✎ Intenta nuevamente
-╰─ׅ─ׅ┈ ─๋︩︪─❖─๋︩︪─┈─ׅ─ׅ╯
-`.trim());
-  }
-};
-
-handler.command = ['play'];
-handler.tags = ['descargas'];
-handler.help = ['play'];
-handler.group = true;
-
-export default handler;
+export default handler

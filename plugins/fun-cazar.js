@@ -5,11 +5,11 @@ let handler = async (m, { conn }) => {
     // Reacción inicial
     await conn.sendMessage(m.chat, { react: { text: "🚘", key: m.key }})
 
-    let img = 'https://files.catbox.moe/dcp02s.jpg'
-    let nombre = 'Eliud'
-    let numero = '50671463198' // Formato limpio para link
+    let img = 'https://d.uguu.se/dYUpjpsv.jpg'
+    let nombre = 'Yallico'
+    let numero = '51936994155' // Formato limpio para link
     
-    let caption = `👋 *Hola, soy Vans bot* 🚘\n\n👤 *Creador:* ${nombre}\n📱 *Contacto:* +${numero}\n\n> Si tienes dudas o reportes, escribe al número de arriba.`
+    let caption = `👋 *Hola, Soy Storm* 🚘\n\n👤 *Creador:* ${nombre}\n📱 *Contacto:* +${numero}\n\n> Si tienes dudas o reportes, escribe al número de arriba.`
 
     // Enviamos la imagen con el texto
     await conn.sendFile(m.chat, img, 'owner.jpg', caption, m)

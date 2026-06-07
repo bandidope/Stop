@@ -1,5 +1,5 @@
 let handler = async (m, {conn, command}) => {
-  let url = trend[Math.floor(Math.random() * trend.length)];
+  let url = chicas[Math.floor(Math.random() * chicas.length)];
     await conn.sendFile( 
      m.chat, 
      url, 
@@ -7,11 +7,11 @@ let handler = async (m, {conn, command}) => {
      ` 
  𝗧𝗥𝗘𝗡𝗗 𝗗𝗘 𝗧𝗜𝗞 𝗧𝗢𝗞`.trim(), m)
 };
-handler.help = ["trend"];
+handler.help = ["chicas < Trend Tik Tok >"];
 handler.tags = ["internet"];
-handler.command = /^(trend)$/i;
+handler.command = /^(chicas)$/i;
 export default handler;
 
-global.trend = [
+global.chicas = [
   "https://h.uguu.se/CQssvkFW.mp4",
 ];

@@ -1,5 +1,5 @@
 let handler = async (m, {conn, command}) => {
-  let url = tren[Math.floor(Math.random() * trend.length)];
+  let url = trend[Math.floor(Math.random() * trend.length)];
     await conn.sendFile( 
      m.chat, 
      url, 

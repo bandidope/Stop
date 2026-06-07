@@ -49,7 +49,7 @@ let handler = async (m, { conn, args, usedPrefix, command }) => {
     if (!url) {
       return conn.reply(
         m.chat,
-        `📸 *Falta o link, amor*\n` +
+        `📸 *El enlace no está disponible, cariño.*\n` +
         `Use: *${usedPrefix + command}* <link do TikTok>\n` +
         `Exemplo: ${usedPrefix + command} https://vm.tiktok.com/ZMAjg9kD4/`,
         m
@@ -57,14 +57,14 @@ let handler = async (m, { conn, args, usedPrefix, command }) => {
     }
 
     // Aviso inicial
-    await conn.reply(m.chat, '⏳ *Espera aí, vou puxar as fotinhas…*', m);
+    await conn.reply(m.chat, '⏳ *Espera…*', m);
 
     const { images, title, author } = await fetchTikTokImages(url);
 
     if (!images.length) {
       return conn.reply(
         m.chat,
-        '😿 Não encontrei fotos nesse TikTok. Confirme que é um *slideshow* (publicação de fotos).',
+        '😿 No encontré ninguna foto en ese TikTok. Por favor.',
         m
       );
     }
@@ -92,8 +92,8 @@ let handler = async (m, { conn, args, usedPrefix, command }) => {
     // Mensagem final
     await conn.reply(
       m.chat,
-      `✅ *Prontinho* — enviei ${images.length} fot${images.length === 1 ? 'o' : 'os'}.\n` +
-      `Se quiser outro, manda o link com *.tiktokimg* 😉`,
+      `✅ *¡Listo!* — enviei ${images.length} fot${images.length === 1 ? 'o' : 'os'}.\n` +
+      `Si quieres otro, envía el enlace con *.tiktokimg* 😉`,
       m
     );
 
@@ -101,16 +101,16 @@ let handler = async (m, { conn, args, usedPrefix, command }) => {
     console.error(err);
     await conn.reply(
       m.chat,
-      `💥 *Erro na descarga:*\n${String(err.message || err)}` +
-      `\n\nDicas:\n• Verifique se a postagem é de *fotos/slideshow*.\n` +
-      `• Tente com o link web (não privado).`,
+      `💥 *Error durante la descarga:*\n${String(err.message || err)}` +
+      `\n\nDicas:\n• *Por favor, compruebe si la publicación es de Fotos*..\n` +
+      `• Intenta usar el enlace web (no uno privado)..`,
       m
     );
   }
 };
 
 handler.help = ['tiktokimg <url>', 'tiktokimagem <url>'];
-handler.tags = ['downloader', 'tiktok'];
+handler.tags = ["descargas"];
 handler.command = /^(tiktokimg|tiktokimagem)$/i;
 
 export default handler;

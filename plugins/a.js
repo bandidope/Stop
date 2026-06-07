@@ -24,6 +24,5 @@ const handler = async (m, { conn, command }) => {
 handler.command = ['cuca', 'cuquita', 'culito'];
 handler.tags = ['nsfw'];
 handler.help = ['cuca', 'cuquita', 'culito'];
-handler.register = true;
 
 export default handler;

@@ -1,7 +1,7 @@
 /*
   Código Creado Por MediaHub Software
   Funcionalidad: Mejora calidad, escala y elimina fondo de imágenes usando Sharpify API
-  Modos: enhance (mejorar hd), upscale (ampliar), removebg (quitar fondo)
+  Modos: enhance (mejorar hd), upscale (ampliar), rbg (quitar fondo)
 */
 
 import fetch from 'node-fetch'
@@ -16,7 +16,7 @@ const apiHeaders = {
 const modelos = {
   enhance: 'https://sharpify-api.vercel.app/api/enhance/auto_enhance',
   upscale: 'https://sharpify-api.vercel.app/api/enhance/upscale',
-  removebg: 'https://sharpify-api.vercel.app/api/enhance/bgrem'
+  rbg: 'https://sharpify-api.vercel.app/api/enhance/bgrem'
 }
 
 async function getImageBuffer(m, conn) {
@@ -82,7 +82,7 @@ const handler = async (m, { conn, args, usedPrefix, command }) => {
   let modo = (args[0] || '').toLowerCase()
   if (!modo || !modelos[modo]) {
     if (/upscale/i.test(command)) modo = 'upscale'
-    else if (/removebg/i.test(command)) modo = 'removebg'
+    else if (/rbg/i.test(command)) modo = 'rbg'
     else modo = 'enhance'
   }
 
@@ -90,7 +90,7 @@ const handler = async (m, { conn, args, usedPrefix, command }) => {
     return conn.reply(m.chat,
       `╭─❒「 ✨ sʜᴀʀᴘɪғʏ 」\n` +
       `│ ❌ Modo *${modo}* no válido.\n` +
-      `│ Usa: enhance, upscale, removebg\n` +
+      `│ Usa: enhance, upscale, rbg\n` +
       `╰─⬣`, m)
   }
 
@@ -114,12 +114,12 @@ const handler = async (m, { conn, args, usedPrefix, command }) => {
       `│ 📌 *Modos disponibles:*\n` +
       `│ • *enhance* — Mejora automática hd\n` +
       `│ • *upscale* — Ampliar resolución\n` +
-      `│ • *removebg* — Quitar fondo\n` +
+      `│ • *rbg* — Quitar fondo\n` +
       `│\n` +
       `│ 📋 *Ejemplos:*\n` +
       `│ ${usedPrefix}${command} enhance\n` +
       `│ ${usedPrefix}${command} upscale\n` +
-      `│ ${usedPrefix}${command} removebg\n` +
+      `│ ${usedPrefix}${command} rbg\n` +
       `│\n` +
       `│ © ᴍᴇᴅɪᴀʜᴜʙ sᴏғᴛᴡᴀʀᴇ 🌐\n` +
       `╰─⬣`, m)
@@ -166,8 +166,8 @@ const handler = async (m, { conn, args, usedPrefix, command }) => {
   }
 }
 
-handler.help = ['remini [enhance|upscale|removebg]']
-handler.tags = ['editor']
-handler.command = /^(remini|upscale|removebg)$/i
+handler.help = ['rbg]']
+handler.tags = ['tools']
+handler.command = /^(rbg)$/i
 
 export default handler

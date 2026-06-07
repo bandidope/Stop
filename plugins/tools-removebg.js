@@ -1,17 +1,26 @@
-import uploadImage from '../lib/uploadImage.js';
-import {sticker} from '../lib/sticker.js';
-const handler = async (m, {conn, text}) => {
-  try {
-    const q = m.quoted ? m.quoted : m;
-    const mime = (q.msg || q).mimetype || '';
-    const img = await q.download();
-    const url = await uploadImage(img);
-    const sremovebg = global.API(`https://api.lolhuman.xyz/api/removebg?apikey=${lolkeysapi}&img=${url}`);
-    const stickerr = await sticker(false, sremovebg, global.packname, global.author);
-    conn.sendFile(m.chat, stickerr, 'sticker.webp', '', m, {asSticker: true});
-  } catch (e) {
-    m.reply('*[❗𝐈𝐍𝐅𝐎❗] 𝙻𝙾 𝚂𝙸𝙴𝙽𝚃𝙾, 𝙾𝙲𝚄𝚁𝚁𝙸𝙾 𝚄𝙽 𝙴𝚁𝚁𝙾𝚁, 𝚅𝚄𝙴𝙻𝚅𝙰 𝙰 𝙸𝙽𝚃𝙴𝚁𝙽𝚃𝙰𝚁𝙻𝙾, 𝙽𝙾 𝙾𝙻𝚅𝙸𝙳𝙴 𝚁𝙴𝚂𝙿𝙾𝙽𝙳𝙴𝚁 𝙰 𝚄𝙽𝙰 𝙸𝙼𝙰𝙶𝙴𝙽 𝙻𝙰 𝙲𝚄𝙰𝙻 𝚂𝙴 𝙲𝙾𝙽𝚅𝙴𝚁𝚃𝙸𝚁𝙰 𝙴𝙽 𝚂𝚃𝙸𝙲𝙺𝙴𝚁 𝚂𝙸𝙽 𝙵𝙾𝙽𝙳𝙾*');
-  }
-};
-handler.command = /^sremovebg|removebg$/i;
+import fetch from 'node-fetch';
+const handler = async (m, {conn, text, usedPrefix, command}) => {
+if (!text) throw `*🧑‍💻 ingrese la URL de la imagen.*`;
+m.react('🕒');
+await conn.sendMessage(m.chat, {text: '*🧑‍💻 Eliminando, Espere Un Momento...*'}, {quoted: m});
+try {
+const formData = new FormData();
+formData.append("size", "auto");
+formData.append("image_url", text);
+const response = await fetch("https://api.remove.bg/v1.0/removebg", {
+method: "POST",
+headers: { "X-Api-Key": "pZoqmwkwmMSJAVdJFDnMgWB8" },
+body: formData,
+});
+if (!response.ok) throw new Error('Network response was not ok');
+const buffer = await response.arrayBuffer();
+m.react('☑️');
+await conn.sendMessage(m.chat, {image: Buffer.from(buffer)}, {quoted: m});
+} catch (error) {
+throw `Error: ${error.message}`;
+}
+}
+handler.tags = ['tools'];
+handler.help = ['removebg'];
+handler.command = ['removebg','bg'];
 export default handler;

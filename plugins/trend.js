@@ -1,5 +1,5 @@
 let handler = async (m, {conn, command}) => {
-  let url = TrendTikTok[Math.floor(Math.random() * TrendTikTok.length)];
+  let url = tren[Math.floor(Math.random() * trend.length)];
     await conn.sendFile( 
      m.chat, 
      url, 
@@ -7,19 +7,11 @@ let handler = async (m, {conn, command}) => {
      ` 
  𝗧𝗥𝗘𝗡𝗗 𝗗𝗘 𝗧𝗜𝗞 𝗧𝗢𝗞`.trim(), m)
 };
-handler.help = ["TrendTikTok"];
+handler.help = ["trend"];
 handler.tags = ["internet"];
-handler.command = /^(TrendTikTok)$/i;
+handler.command = /^(trend)$/i;
 export default handler;
 
-global.TrendTikTok = [
-  "https://qu.ax/Ylk.mp4",
-  "https://qu.ax/gjAe.mp4",
-  "https://qu.ax/LJqP.mp4",
-  "https://qu.ax/sdTz.mp4",
-  "https://qu.ax/sUeO.mp4",
-  "https://qu.ax/EzVe.mp4",
-  "https://qu.ax/uQjN.mp4",
-  "https://qu.ax/FLJU.mp4",
-  "https://qu.ax/GZQe.mp4",
+global.trend = [
+  "https://h.uguu.se/CQssvkFW.mp4",
 ];

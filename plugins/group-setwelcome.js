@@ -1,34 +1,42 @@
-let handler = async (m, { conn, text, isROwner, isOwner }) => {
-    let fkontak = { 
-        "key": { 
-            "participants":"0@s.whatsapp.net", 
-            "remoteJid": "status@broadcast", 
-            "fromMe": false, 
-            "id": "Halo" 
-        }, 
-        "message": { 
-            "contactMessage": { 
-                "vcard": `BEGIN:VCARD\nVERSION:3.0\nN:Sy;Bot;;;\nFN:y\nitem1.TEL;waid=${m.sender.split('@')[0]}:${m.sender.split('@')[0]}\nitem1.X-ABLabel:Ponsel\nEND:VCARD` 
-            }
-        }, 
-        "participant": "0@s.whatsapp.net" 
-    };
+import { createHash } from 'crypto';  
+import fetch from 'node-fetch';
 
-    if (text) {
-        global.db.data.chats[m.chat].sWelcome = text;
-        // **THIS IS THE KEY FIX:** Save the database after modification
-        await global.db.write(); 
-        conn.reply(m.chat, '_*LA BIENVENIDA DEL GRUPO HA SIDO CONFIGURADA*_', fkontak, m);
-    } else {
-        conn.reply(m.chat, `*_ESCRIBE EL MENSAJE DE BIENVENIDA_*\n*_OPCIONAL PUEDE USAR LO QUE ESTA CON "@" PARA AGREGAR MÁS INFORMACIÓN:_*\n\n*⚡ @user (Mención al usuario(a))*\n*⚡ @group (Nombre de grupo)*\n*⚡ @desc (Description de grupo)*\n\n*RECUERDE QUE LOS "@" SON OPCIONALES*`, m);
+/**
+ * Este manejador de comandos permite a los administradores del grupo
+ * establecer y borrar un mensaje de bienvenida personalizado.
+ */
+const handler = async (m, { conn, text, command, isAdmin, isOwner }) => {
+    // Si no es un grupo, o el usuario no es admin/dueño, no hagas nada.
+    if (!m.isGroup || (!isAdmin && !isOwner)) {
+        return m.reply('❌ ¡Solo los administradores o el dueño pueden usar estos comandos!');
+    }
+
+    // Asegurarse de que el chat tenga una entrada en la base de datos
+    let chat = global.db.data.chats[m.chat] || {};
+    if (!global.db.data.chats[m.chat]) {
+        global.db.data.chats[m.chat] = chat;
+    }
+
+    if (command === 'setwelcome') {
+        if (!text) {
+            return m.reply('❌ Por favor, proporciona un mensaje de bienvenida. Puedes usar los siguientes placeholders:\n`@user`, `@group`, `@count`');
+        }
+
+        // Guarda el mensaje personalizado en la base de datos del chat
+        chat.customWelcome = text.trim();
+        m.reply(`✅ El mensaje de bienvenida personalizado ha sido establecido con éxito.`);
+
+    } else if (command === 'delwelcome') {
+        // Borra el mensaje personalizado
+        chat.customWelcome = null;
+        m.reply('✅ El mensaje de bienvenida personalizado ha sido eliminado. Ahora se usará el mensaje predeterminado.');
     }
 };
 
-handler.help = ['setwelcome @user + texto'];
-handler.tags = ['group'];
-handler.command = ['setwelcome', 'bienvenida']; 
-handler.botAdmin = true;
+handler.help = ['setwelcome <mensaje>', 'delwelcome'];
+handler.tags = ['group', 'config'];
+handler.command = ['setwelcome', 'delwelcome'];
+handler.owner = false;
 handler.admin = true;
-handler.group = true;
 
 export default handler;

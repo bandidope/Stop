@@ -1,94 +1,97 @@
-import { WAMessageStubType } from '@whiskeysockets/baileys';
-import { readFileSync } from 'fs';
-import { join } from 'path';
+import { WAMessageStubType } from '@whiskeysockets/baileys'
+import fetch from 'node-fetch'  // Asegúrate de tenerlo: npm i node-fetch
 
-export async function before(m, { conn, groupMetadata }) {
+export async function before(m, { conn, participants, groupMetadata }) {
   try {
-    if (!m.messageStubType || !m.isGroup) return true;
+    if (!m.isGroup) return true
+    if (!m.messageStubType) return true
 
-    const chat = global.db?.data?.chats?.[m.chat];
-    if (!chat || !chat.bienvenida) return true;
+    const currentSize = (participants || []).length
+    const groupName = groupMetadata?.subject || 'este grupo'
+    const defaultImg = 'https://raw.githubusercontent.com/danielalejandrobasado-glitch/Yotsuba-MD-Premium/main/uploads/f3dec04bc1df5762.jpg'
 
-    // --- ✅ Imagen local configurada ---
-    const imgBuffer = readFileSync(join(process.cwd(), 'storage', 'img', 'catalogo.png'));
+    /**
+     * Envía imagen + caption con formato de reenvío desde newsletter
+     */
+    const sendMsg = async (jid, text, user, title) => {
+      let imageUrl
+      try {
+        imageUrl = await conn.profilePictureUrl(user, 'image')
+      } catch (e) {
+        imageUrl = defaultImg
+      }
 
-    const fkontak = {
-      key: {
-        participants: '0@s.whatsapp.net',
-        remoteJid: 'status@broadcast',
-        fromMe: false,
-        id: 'Pᴏᴡᴇʀᴇᴅ Bʏ Tᴇᴀᴍ Nɪɢʜᴛᴡɪsʜ 🌀'
-      },
-      message: {
-        contactMessage: {
-          vcard: `BEGIN:VCARD\nVERSION:3.0\nN:Sy;Bot;;;\nFN: Pᴏᴡᴇʀᴇᴅ Bʏ Tᴇᴀᴍ Nɪɢʜᴛᴡɪsʜ 🌀\nitem1.TEL;waid=${
-            conn.user.jid.split('@')[0]
-          }:${conn.user.jid.split('@')[0]}\nitem1.X-ABLabel:Ponsel\nEND:VCARD`
+      // Descargar la imagen como buffer
+      const res = await fetch(imageUrl)
+      const imageBuffer = await res.buffer()
+
+      // Contexto que genera el texto "Reenviado muchas veces · [nombre del newsletter]"
+      const contextInfo = {
+        mentionedJid: [user],
+        forwardingScore: 999,
+        isForwarded: true,
+        forwardedNewsletterMessageInfo: {
+          newsletterJid: '120363420846835529@newsletter',   // Cambia si quieres
+          newsletterName: '⏤͟͞ू⃪፝͜⁞⟡ m᥆ᥒkᥱᥡ ძ ᥣᥙ𝖿𝖿ᥡ',    // Nombre visible
+          serverMessageId: String(Date.now())
         }
-      },
-      participant: '0@s.whatsapp.net'
-    };
+      }
 
-    let userJid;
-    switch (m.messageStubType) {
-      case WAMessageStubType.GROUP_PARTICIPANT_ADD:
-      case WAMessageStubType.GROUP_PARTICIPANT_REMOVE:
-        userJid = m.messageStubParameters?.[0];
-        break;
-      case WAMessageStubType.GROUP_PARTICIPANT_LEAVE:
-        userJid = m.key.participant;
-        break;
-      default:
-        return true;
+      await conn.sendMessage(jid, {
+        image: imageBuffer,
+        caption: text,
+        contextInfo
+      }, { quoted: m })
     }
 
-    if (!userJid) return true;
+    // --- BIENVENIDA ---
+    if (m.messageStubType === WAMessageStubType.GROUP_PARTICIPANT_ADD || m.messageStubType === 27) {
+      const users = m.messageStubParameters || []
+      for (const user of users) {
+        const jid = user.includes('@') ? user : `${user}@s.whatsapp.net`
+        const mentionTag = '@' + jid.split('@')[0]
+        const realSize = currentSize + 1
 
-    const user = `@${userJid.split('@')[0]}`;
-    const groupName = groupMetadata.subject;
-    const groupDesc = groupMetadata.desc || 'Sin descripción disponible.';
+        const welcomeText = `
+🕊️ *BIENVENIDO/DA* 🕊️
+─── ˗ˏˋ 🍖 ˎˊ˗ ───
 
-    const { customWelcome, customBye, customKick } = chat;
+∫ ⚓ *USUARIO* : ${mentionTag}
+∫ 🌍 *GRUPO* : ${groupName}
+∫ 👥 *MIEMBROS* : ${realSize}
+∫ 📅 *FECHA* : ${new Date().toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' })}
 
-    // --- 🟢 BIENVENIDA ---
-    if (m.messageStubType === WAMessageStubType.GROUP_PARTICIPANT_ADD) {
-      const welcomeText = customWelcome
-        ? customWelcome.replace(/@user/gi, user).replace(/@group/gi, groupName).replace(/@desc/gi, groupDesc)
-        : `✨ *¡Bienvenido/a!* ✨\n\nHola ${user}, es un gusto tenerte en *${groupName}*.\n\n📝 *REGLAS Y INFO:*\n${groupDesc}\n\n> *Pᴏᴡᴇʀᴇᴅ Bʏ Tᴇᴀᴍ Nɪɢʜᴛᴡɪsʜ 🌀*`;
+*¡Yoshaaa! Un nuevo nakama se une a la tripulación.*`.trim()
 
-      await conn.sendMessage(m.chat, {
-        image: imgBuffer,
-        caption: welcomeText,
-        mentions: [userJid]
-      }, { quoted: fkontak });
+        await sendMsg(m.chat, welcomeText, jid, '✨ B I E N V E N I D O ✨')
+      }
     }
 
-    // --- 🔴 SALIDA VOLUNTARIA ---
-    if (m.messageStubType === WAMessageStubType.GROUP_PARTICIPANT_LEAVE) {
-      const goodbyeText = customBye
-        ? customBye.replace(/@user/gi, user).replace(/@group/gi, groupName)
-        : `*Adiós ${user} Estorbo 🤝🏼*\n\n_*-1 Planta En Este Hermoso Grupo 😮‍💨*_\n\n> *${groupName}*`;
+    // --- ADIÓS ---
+    if (m.messageStubType === WAMessageStubType.GROUP_PARTICIPANT_REMOVE || m.messageStubType === 32) {
+      const users = m.messageStubParameters || []
+      for (const user of users) {
+        const jid = user.includes('@') ? user : `${user}@s.whatsapp.net`
+        const mentionTag = '@' + jid.split('@')[0]
+        const realSize = currentSize - 1
 
-      await conn.sendMessage(m.chat, {
-        image: imgBuffer,
-        caption: goodbyeText,
-        mentions: [userJid]
-      }, { quoted: fkontak });
+        const byeText = `
+🥀 *ADIÓS NAKAMA* 🥀
+─── ˗ˏˋ 🌊 ˎˊ˗ ───
+
+∫ 👤 *USUARIO* : ${mentionTag}
+∫ 🚢 *GRUPO* : ${groupName}
+∫ 👥 *QUEDAN* : ${realSize}
+
+*¡Esperamos verte de nuevo en Grand Line!*`.trim()
+
+        await sendMsg(m.chat, byeText, jid, '┖ [ 🖇️ A D I O S / B Y E ] ───⊚')
+      }
     }
 
-    // --- 🚫 ELIMINADO ---
-    if (m.messageStubType === WAMessageStubType.GROUP_PARTICIPANT_REMOVE) {
-      const kickText = customKick
-        ? customKick.replace(/@user/gi, user).replace(/@group/gi, groupName)
-        : `*¡Fue Expulsado ${user}!* ⚡\n\n_*-1 Perro En Este Grupo*_\n\n> *${groupName}*`;
-
-      await conn.sendMessage(m.chat, {
-        image: imgBuffer,
-        caption: kickText,
-        mentions: [userJid]
-      }, { quoted: fkontak });
-    }
-  } catch (error) {
-    console.error('❌ Error en el sistema de bienvenida:', error);
+    return true
+  } catch (e) {
+    console.error('Error en plugin welcome:', e)
+    return true
   }
 }

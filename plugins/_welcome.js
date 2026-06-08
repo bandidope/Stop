@@ -16,7 +16,7 @@ export async function before(m, { conn, groupMetadata }) {
       key: {
         participants: '0@s.whatsapp.net',
         remoteJid: 'status@broadcast',
-        fromMe: true,
+        fromMe: false,
         id: 'Pᴏᴡᴇʀᴇᴅ Bʏ Tᴇᴀᴍ Nɪɢʜᴛᴡɪsʜ 🌀'
       },
       message: {

@@ -1,7 +1,5 @@
 import { xpRange } from '../lib/levelling.js';
 import axios from 'axios';
-import { readFileSync } from 'fs';
-import { join } from 'path';
 
 const clockString = ms => {
   const h = Math.floor(ms / 3600000);
@@ -10,36 +8,63 @@ const clockString = ms => {
   return [h, m, s].map(v => v.toString().padStart(2, '0')).join(':');
 };
 
-const saludar = () => {
+const saludarSegunHora = () => {
   const hora = new Date().getHours();
-  if (hora >= 5 && hora < 12) return '🌅 ¡Buenos días!';
-  if (hora >= 12 && hora < 7) return '☀️ ¡Buenas tardes!';
-  return '🌙 ¡Buenas noches!';
+  if (hora >= 5 && hora < 12) return '🌅 ¡𝖡𝗎𝖾𝗇𝗈𝗌 𝖽𝗂́𝖺𝗌!';
+  if (hora >= 12 && hora < 19) return '☀️ ¡𝖡𝗎𝖾𝗇𝗈𝗌 𝗍𝖺𝗋𝖽𝖾𝗌!';
+  return '🌙 ¡𝖡𝗎𝖾𝗇𝖺𝗌 𝗇𝗈𝖼𝗁𝖾𝗌!';
+};
+
+// Imagen proporcionada y diseño de Vans
+const imgVans = 'https://files.catbox.moe/dcp02s.jpg';
+const borderTop = '╭╾━━━━╼ 〔 👟 〕 ╾━━━━╼╮';
+const borderBottom = '╰╾━━━━╼ 〔 🛸 〕 ╾━━━━╼╯';
+
+const menuFooter = `
+${borderTop}
+│  🛸 *𝖁𝖆𝖓𝖘 𝕭𝖔𝖙 𝕾𝖞𝖘𝖙𝖊𝖒*
+│  🛠️ *𝖡𝗒 𝖤𝗅𝗂𝗎𝖽*
+│  🛹 *𝖮𝖿𝖿 𝖳𝗁𝖾 𝖶𝖺𝗅𝗅*
+${borderBottom}
+`.trim();
+
+Array.prototype.getRandom = function () {
+  return this[Math.floor(Math.random() * this.length)];
 };
 
 const handler = async (m, { conn, usedPrefix }) => {
   try {
-    // Definir la ruta de la imagen local y leerla como Buffer
-    const img = readFileSync(join(process.cwd(), 'storage', 'img', 'catalogo.png'));
-
-    const user = global.db.data.users[m.sender] || { level: 0, exp: 0, limit: 10 };
+    const saludo = saludarSegunHora();
+    const user = global.db.data.users[m.sender] || { level: 1, exp: 0, limit: 5 };
     const { exp, level, limit } = user;
     const { min, xp } = xpRange(level, global.multiplier || 1);
-    const uptime = clockString(process.uptime() * 1000);
-    const tag = `@${m.sender.split('@')[0]}`;
     const totalUsers = Object.keys(global.db.data.users).length;
+    const mode = global.opts?.self ? '𝖯𝗋𝗂𝗏𝖺𝖽𝗈 🔒' : '𝖯𝗎́𝖻𝗅𝗂𝖼𝗈 🌍';
+    const uptime = clockString(process.uptime() * 1000);
+    const tagUsuario = `@${m.sender.split('@')[0]}`;
+    const userName = (await conn.getName?.(m.sender)) || tagUsuario;
 
-    // Encabezado con Estilo de Caja
-let menu = `${saludar()} ${tag} ✨\n\n`;
-    menu += `╭╾━━━━╼ 〔 🇦🇱 〕 ╾━━━━╼╮\n`;
-    menu += `┃  🇦🇱 *Storm Bot 🇦🇱*\n`;
-    menu += `┃  👤 *Usuario:* ${tag}\n`;
-    menu += `┃  📈 *Nivel:* ${level}\n`;
-    menu += `┃  ✨ *Exp:* ${exp - min}/${xp}\n`;
-    menu += `┃  💎 *Adquirir:* .comprar\n`;
-    menu += `┃  ⏳ *Activo:* ${uptime}\n`;
-    menu += `┃  👥 *Usuarios:* ${totalUsers}\n`;
-    menu += `╰╾━━━━╼ 〔 🚀 〕 ╾━━━━╼╯\n`;
+    const adText = ["Vans System", "Eliud Interface", "Urban Bot"].getRandom();
+
+    let thumbnailBuffer;
+    try {
+      const response = await axios.get(imgVans, { responseType: 'arraybuffer' });
+      thumbnailBuffer = Buffer.from(response.data);
+    } catch {
+      thumbnailBuffer = Buffer.alloc(0);
+    }
+
+    const fkontak = {
+      key: { participants: "0@s.whatsapp.net", fromMe: false, id: "VansBot" },
+      message: {
+        locationMessage: {
+          name: adText,
+          jpegThumbnail: thumbnailBuffer,
+          vcard: "BEGIN:VCARD\nVERSION:3.0\nN:;Eliud;;;\nFN:Eliud\nORG:VansBot\nEND:VCARD"
+        }
+      },
+      participant: "0@s.whatsapp.net"
+    };
 
     let categorizedCommands = {};
     Object.values(global.plugins)
@@ -48,47 +73,47 @@ let menu = `${saludar()} ${tag} ✨\n\n`;
         const tag = Array.isArray(p.tags) ? p.tags[0] : p.tags || 'Otros';
         const cmds = Array.isArray(p.help) ? p.help : [p.help];
         categorizedCommands[tag] = categorizedCommands[tag] || new Set();
-        cmds.forEach(cmd => categorizedCommands[tag].add(cmd));
+        cmds.forEach(cmd => categorizedCommands[tag].add(usedPrefix + cmd));
       });
 
-    const categoryIcons = {
-      arceus: '🇦🇱', internet: '🔹', música: '❓', downloader: '🔹', owner: '💻',
-      admin: '🔹', otros: '🧩', econ: '🔹', tools: '🔹', audio: '🔹',
-      descargas: '📥', search: '🔭', info: 'ℹ️', buscador: '🔹',
-      búsquedas: '🔹', dl: '🔹', anime: '🏮', random: '🔹',
-      ff: '🔫', descarga: '🔹', nable: '🔹', fun: '🔹',
-      diversión: '🎮', consultor: '🔹', sticker: '🎭', maker: '🔹',
-      game: '🔹', arte: '🔹', cocina: '🔹', gacha: '🔹', ia: '🔹',
-      group: '👥', grupo: '🔹', ai: '🔹', staff: '🔹', main: '🔹',
-      transformador: '🔹', nsfw: '🔞', fix: '🔹', rg: '🔹', rpg: '🛡️',
-      economía: '🔹', mascot: '🔹', herramientas: '🛠️'
+    const categoryEmojis = {
+      anime: '🌸', info: '📢', search: '🔍', diversión: '🎢', subbots: '🤖',
+      rpg: '🛹', registro: '📝', sticker: '🎨', imagen: '📸', logo: '🖋️',
+      premium: '🎟️', configuración: '⚙️', descargas: '📥', herramientas: '🔧',
+      nsfw: '🔞', 'base de datos': '📁', audios: '🎧', freefire: '🔫', otros: '🧩'
     };
 
-    for (const [title, cmds] of Object.entries(categorizedCommands)) {
-      const icon = categoryIcons[title.toLowerCase()] || '🇦🇱';
-      menu += `\n╭╾━━╼ 〔 ${icon} *${title.toUpperCase()}* 〕\n`;
-      cmds.forEach(cmd => {
-        menu += `┃ • ${usedPrefix}${cmd}\n`;
-      });
-      menu += `╰╾━━╼ 〔 Pᴏᴡᴇʀᴇᴅ Bʏ Tᴇᴀᴍ Nɪɢʜᴛᴡɪsʜ 〕\n`;
-    }
+    const menuBody = Object.entries(categorizedCommands).map(([title, cmds]) => {
+      const emoji = categoryEmojis[title.toLowerCase()] || '👟';
+      const list = [...cmds].map(cmd => `│  ◦ ${cmd}`).join('\n');
+      return `╭╾━━━━╼ 〔 ${emoji} ${title.toUpperCase()} 〕\n${list}\n╰╾━━━━╼ 〔 🛸 〕`;
+    }).join('\n\n');
 
-    menu += `\n╭╾━━━━╼ 〔 𝐒𝐭𝐨𝐫𝐦 𝐁𝐨𝐭 〕 ╾━━━━╼╮\n`;
-    menu += `┃  ✨ *Storm Bot 🇦🇱*\n`;
-    menu += `┃  🛠️ *By Whois Developers*\n`;
-    menu += `┃  🇦🇱 *Power & Speed*\n`;
-    menu += `╰╾━━━━╼ 〔 🚀 〕 ╾━━━━╼╯`;
+    const header = `
+${saludo} ${tagUsuario} 👋
 
-    // Enviar mensaje con el Buffer de la imagen
+${borderTop}
+│  👟 *𝖁𝖆𝖓𝖘 𝕭𝖔𝖙 𝕸𝖊𝖓𝖚́*
+│  👤 *𝖴𝗌𝗎𝖺𝗋𝗂𝗈:* ${userName}
+│  📈 *𝖭𝗂𝗏𝖾𝗅:* ${level}
+│  ✨ *𝖤𝗑𝗉:* ${exp - min}/${xp}
+│  🎫 *𝖳𝗂𝖼𝗄𝖾𝗍𝗌:* ${limit}
+│  ⏳ *𝖴𝗉𝗍𝗂𝗆𝖾:* ${uptime}
+│  👥 *𝖴𝗌𝗎𝖺𝗋𝗂𝗈𝗌:* ${totalUsers}
+${borderBottom}
+`.trim();
+
+    const fullMenu = `${header}\n\n${menuBody}\n\n${menuFooter}`;
+
     await conn.sendMessage(m.chat, {
-      image: img, // Ahora enviamos el Buffer directamente
-      caption: menu.trim(),
+      image: { url: imgVans },
+      caption: fullMenu,
       mentions: [m.sender]
-    }, { quoted: m });
+    }, { quoted: fkontak });
 
   } catch (e) {
-    console.error(e);
-    await conn.reply(m.chat, '❌ Error al generar el menú. Verifica que la imagen exista en storage/img/catalogo.png', m);
+    console.error('❌ Error en el menú:', e);
+    await conn.reply(m.chat, `⚠️ 𝖤𝗋𝗋𝗈𝗋 𝖺𝗅 𝖼𝖺𝗋𝗀𝖺𝗋 𝖾𝗅 𝗆𝖾𝗇𝗎́.`, m);
   }
 };
 

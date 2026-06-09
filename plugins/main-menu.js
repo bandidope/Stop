@@ -30,11 +30,16 @@ const handler = async (m, { conn, usedPrefix }) => {
     const totalUsers = Object.keys(global.db.data.users).length;
 
     // Encabezado con Estilo de Caja
-let menu = `✿ *Hᴏʟᴀ _${Tag}_ Que Tengas ${saludar()}*\n`;
-    menu += `>  Desarrollado Por *Whois Yallico - +51 936 994 155*\n`;
+let menu = ` *Hᴏʟᴀ _${Tag}_ Que Tengas ${saludar()}*\n`;
+    menu += `Desarrollado Por *Whois Yallico - +51 936 994 155\n`;
     menu += `𓈒𓏸🌴 *Bot Name :* Jackson Storm Bot\n`;
     menu += `𓈒𓏸🌀 *Comprar Bot :* .comprar\n`;
     menu += `𓈒𓏸🎵 *Usuarios Activos :* ${totalUsers}\n`;
+    menu += `┃  ✨ *Exp:* ${exp - min}/${xp}\n`;
+    menu += `┃  💎 *Adquirir:* .comprar\n`;
+    menu += `┃  ⏳ *Activo:* ${uptime}\n`;
+    menu += `┃  👥 *Usuarios:* ${totalUsers}\n`;
+    menu += `╰╾━━━━╼ 〔 🚀 〕 ╾━━━━╼╯\n`;
 
     let categorizedCommands = {};
     Object.values(global.plugins)

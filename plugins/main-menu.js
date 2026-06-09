@@ -33,10 +33,10 @@ const handler = async (m, { conn, usedPrefix }) => {
     menu += `︵᷼     ⿻ *Storm* ࣪   ࣭  ࣪ *Wa Bot* ࣭  🐈  ࣪\n\n`;
     menu += `✿ *Hᴏʟᴀ ${tag}*\n*${saludar}*\n`;
     menu += `> ꒰꛱ ͜Desarrollado por *Whois Yallico* +51 936 994 155\n`;
-    menu += `𓈒𓏸🌴 \`Bot Name:\`* Storm Bot 🇦🇱\n`;
-    menu += `*𓈒𓏸🌵 \`Activo:\`* ${uptime}\n`;
-    menu += `*𓈒𓏸🌵 \`Comprar:\`* .comprar\n`;
-    menu += `*𓈒𓏸🍃 \`Usuarios:\`* ${totalreg}`;
+    menu += `𓈒𓏸🌴 \Bot Name:\* Storm Bot 🇦🇱\n`;
+    menu += `*𓈒𓏸🌵 \Activo:\* ${uptime}\n`;
+    menu += `*𓈒𓏸🌵 \Comprar:\* .comprar\n`;
+    menu += `*𓈒𓏸🍃 \Usuarios:\* ${totalreg}`;
     menu += `> 😸 Si encuentra un comando con errores no dudes en reportarlo con el Creador\n`;
 
     let categorizedCommands = {};

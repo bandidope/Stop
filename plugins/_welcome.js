@@ -8,7 +8,7 @@ export async function before(m, { conn, participants, groupMetadata }) {
 
     const currentSize = (participants || []).length
     const groupName = groupMetadata?.subject || 'este grupo'
-    const defaultImg = 'https://raw.githubusercontent.com/danielalejandrobasado-glitch/Yotsuba-MD-Premium/main/uploads/f3dec04bc1df5762.jpg'
+    const defaultImg = 'https://cdn.adoolab.xyz/dl/533eebf3.jpeg'
 
     /**
      * Envía imagen + caption con formato de reenvío desde newsletter
@@ -31,8 +31,8 @@ export async function before(m, { conn, participants, groupMetadata }) {
         forwardingScore: 999,
         isForwarded: true,
         forwardedNewsletterMessageInfo: {
-          newsletterJid: '120363420846835529@newsletter',   // Cambia si quieres
-          newsletterName: '⏤͟͞ू⃪፝͜⁞⟡ m᥆ᥒkᥱᥡ ძ ᥣᥙ𝖿𝖿ᥡ',    // Nombre visible
+          newsletterJid: '120363419947391620@newsletter',   // Cambia si quieres
+          newsletterName: '⏤͟͞ू⃪፝͜⁞⟡ Team Nightwish 🇦🇱',    // Nombre visible
           serverMessageId: String(Date.now())
         }
       }

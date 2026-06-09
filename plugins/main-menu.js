@@ -16,15 +16,15 @@ const saludarSegunHora = () => {
 };
 
 // Imagen proporcionada y diseño de Vans
-const imgVans = 'https://files.catbox.moe/dcp02s.jpg';
+const imgVans = 'https://h.uguu.se/uoDTsFLl.jpg';
 const borderTop = '╭╾━━━━╼ 〔 👟 〕 ╾━━━━╼╮';
 const borderBottom = '╰╾━━━━╼ 〔 🛸 〕 ╾━━━━╼╯';
 
 const menuFooter = `
 ${borderTop}
-│  🛸 *𝖁𝖆𝖓𝖘 𝕭𝖔𝖙 𝕾𝖞𝖘𝖙𝖊𝖒*
-│  🛠️ *𝖡𝗒 𝖤𝗅𝗂𝗎𝖽*
-│  🛹 *𝖮𝖿𝖿 𝖳𝗁𝖾 𝖶𝖺𝗅𝗅*
+│  🛸 *Jackson Storm*
+│  🛠️ *𝖡𝗒 Whois*
+│  🛹 *Team Nightwish*
 ${borderBottom}
 `.trim();
 
@@ -55,12 +55,12 @@ const handler = async (m, { conn, usedPrefix }) => {
     }
 
     const fkontak = {
-      key: { participants: "0@s.whatsapp.net", fromMe: false, id: "VansBot" },
+      key: { participants: "0@s.whatsapp.net", fromMe: false, id: "Whois" },
       message: {
         locationMessage: {
           name: adText,
           jpegThumbnail: thumbnailBuffer,
-          vcard: "BEGIN:VCARD\nVERSION:3.0\nN:;Eliud;;;\nFN:Eliud\nORG:VansBot\nEND:VCARD"
+          vcard: "BEGIN:VCARD\nVERSION:3.0\nN:;Yallico;;;\nFN:Whois\nORG:Bot\nEND:VCARD"
         }
       },
       participant: "0@s.whatsapp.net"
@@ -90,10 +90,10 @@ const handler = async (m, { conn, usedPrefix }) => {
     }).join('\n\n');
 
     const header = `
-${saludo} ${tagUsuario} 👋
+*Hola ${saludo} Que Tengas ${tagUsuario} 👋
 
 ${borderTop}
-│  👟 *𝖁𝖆𝖓𝖘 𝕭𝖔𝖙 𝕸𝖊𝖓𝖚́*
+│  👟 *Jackson Storm*
 │  👤 *𝖴𝗌𝗎𝖺𝗋𝗂𝗈:* ${userName}
 │  📈 *𝖭𝗂𝗏𝖾𝗅:* ${level}
 │  ✨ *𝖤𝗑𝗉:* ${exp - min}/${xp}

@@ -90,7 +90,7 @@ const handler = async (m, { conn, usedPrefix }) => {
     }).join('\n\n');
 
     const header = `
-*Hola ${saludo} Que Tengas ${tagUsuario} 👋
+*Hola ${saludo} Un Gusto ${tagUsuario} 👋*
 
 ${borderTop}
 │  👟 *Jackson Storm*

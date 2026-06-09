@@ -30,16 +30,14 @@ const handler = async (m, { conn, usedPrefix }) => {
     const totalUsers = Object.keys(global.db.data.users).length;
 
     // Encabezado con Estilo de Caja
-    let menu = `${saludar()} ${tag} ✨\n\n`;
-    menu += `╭╾━━━━╼ 〔 🇦🇱 〕 ╾━━━━╼╮\n`;
-    menu += `┃  🇦🇱 *Storm Bot 🇦🇱*\n`;
-    menu += `┃  👤 *Usuario:* ${tag}\n`;
-    menu += `┃  📈 *Nivel:* ${level}\n`;
-    menu += `┃  ✨ *Exp:* ${exp - min}/${xp}\n`;
-    menu += `┃  💎 *Adquirir:* .comprar\n`;
-    menu += `┃  ⏳ *Activo:* ${uptime}\n`;
-    menu += `┃  👥 *Usuarios:* ${totalUsers}\n`;
-    menu += `╰╾━━━━╼ 〔 🚀 〕 ╾━━━━╼╯\n`;
+    menu += `︵᷼     ⿻ *Storm* ࣪   ࣭  ࣪ *Wa Bot* ࣭  🐈  ࣪\n\n`;
+    menu += `✿ *Hᴏʟᴀ ${tag}*\n*${saludar}*\n`;
+    menu += `> ꒰꛱ ͜Desarrollado por *Whois Yallico* +51 936 994 155\n`;
+    menu += `𓈒𓏸🌴 \`Bot Name:\`* Storm Bot 🇦🇱\n`;
+    menu += `*𓈒𓏸🌵 \`Activo:\`* ${uptime}\n`;
+    menu += `*𓈒𓏸🌵 \`Comprar:\`* .comprar\n`;
+    menu += `*𓈒𓏸🍃 \`Usuarios:\`* ${totalreg}`;
+    menu += `> 😸 Si encuentra un comando con errores no dudes en reportarlo con el Creador\n`;
 
     let categorizedCommands = {};
     Object.values(global.plugins)
@@ -68,12 +66,12 @@ const handler = async (m, { conn, usedPrefix }) => {
       const icon = categoryIcons[title.toLowerCase()] || '🇦🇱';
       menu += `\n╭╾━━╼ 〔 ${icon} *${title.toUpperCase()}* 〕\n`;
       cmds.forEach(cmd => {
-        menu += `┃  🇦🇱 ${usedPrefix}${cmd}\n`;
+        menu += `┃ • ${usedPrefix}${cmd}\n`;
       });
-      menu += `╰╾━━╼ 〔 🇦🇱 〕\n`;
+      menu += `╰╾━━╼ 〔 Pᴏᴡᴇʀᴇᴅ Bʏ Tᴇᴀᴍ Nɪɢʜᴛᴡɪsʜ 〕\n`;
     }
 
-    menu += `\n╭╾━━━━╼ 〔 🇦🇱 〕 ╾━━━━╼╮\n`;
+    menu += `\n╭╾━━━━╼ 〔 𝐒𝐭𝐨𝐫𝐦 𝐁𝐨𝐭 〕 ╾━━━━╼╮\n`;
     menu += `┃  ✨ *Storm Bot 🇦🇱*\n`;
     menu += `┃  🛠️ *By Whois Developers*\n`;
     menu += `┃  🇦🇱 *Power & Speed*\n`;

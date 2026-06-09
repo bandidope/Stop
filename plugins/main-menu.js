@@ -30,6 +30,7 @@ const handler = async (m, { conn, usedPrefix }) => {
     const totalUsers = Object.keys(global.db.data.users).length;
 
     // Encabezado con Estilo de Caja
+let menu = `${saludar()} ${tag} ✨\n\n`;
     menu += `︵᷼     ⿻ *Storm* ࣪   ࣭  ࣪ *Wa Bot* ࣭  🐈  ࣪\n\n`;
     menu += `✿ *Hᴏʟᴀ ${tag}*\n*${saludar}*\n`;
     menu += `> ꒰꛱ ͜Desarrollado por *Whois Yallico* +51 936 994 155\n`;

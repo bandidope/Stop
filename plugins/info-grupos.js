@@ -13,7 +13,7 @@ let handler = async (m, { conn, usedPrefix, command }) => {
 
 `
 
-   let img = 'https://cdn.adoolab.xyz/dl/533eebf3.jpeg';
+   let img = 'https://h.uguu.se/XuUGfCoT.jpg';
 
    conn.sendMessage(m.chat, { image: { url: img }, caption: grupos }, { quoted: fkontak });
 }

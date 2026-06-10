@@ -39,7 +39,7 @@ handler.before = async function (m, { conn, participants, groupMetadata}) {
 
     let chat = global.db.data.chats[m.chat]
     let usuario = `@${m.sender.split`@`[0]}`
-    let pp = await conn.profilePictureUrl(m.chat, 'image').catch(_ => null) || 'https://cdn.adoolab.xyz/dl/533eebf3.jpeg'
+    let pp = await conn.profilePictureUrl(m.chat, 'image').catch(_ => null) || 'https://cdn.adoolab.xyz/dl/de20913b.jpg'
 
     let nombre = `✨ ${usuario} *ha cambiado el nombre del grupo* ✨\n\n> 📝 *Nuevo nombre:* _${m.messageStubParameters[0]}_`
     let foto = `📸 *¡Nueva foto de grupo!* 📸\n\n> 💫 Acción realizada por: ${usuario}`

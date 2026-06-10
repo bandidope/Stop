@@ -11,8 +11,8 @@ let icono = imagenes[Math.floor(Math.random() * imagenes.length)]
 */
 
 let botdata = global.db.data.settings[conn.user.jid] || {}
-global.iconimg1 = botdata.icon1 || 'https://h.uguu.se/XuUGfCoT.jpg'
-global.iconimg2 = botdata.icon2 || 'https://h.uguu.se/XuUGfCoT.jpg'
+global.iconimg1 = botdata.icon1 || 'https://d.uguu.se/TioCYphp.jpg'
+global.iconimg2 = botdata.icon2 || 'https://d.uguu.se/TioCYphp.jpg'
 global.icono = pickRandom([global.iconimg1, global.iconimg2])
 
 global.rcanal = {

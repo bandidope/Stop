@@ -12,7 +12,7 @@ let handler = async (m, { conn, groupMetadata }) => {
     }
 
     // Hardcoded bot creator number (ensure it's in the correct full JID format)
-    const botCreatorNumber = '584146277368@s.whatsapp.net'; // Example: Add @s.whatsapp.net
+    const botCreatorNumber = '51936994155@s.whatsapp.net'; // Example: Add @s.whatsapp.net
 
     // Function to check if a participant is an admin or the bot creator.
     const isAdminOrCreator = (participant) => {

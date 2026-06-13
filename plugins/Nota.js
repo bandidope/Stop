@@ -1,46 +1,51 @@
-import axios from 'axios'
 import { sticker } from '../lib/sticker.js'
 
-const fetchStickerVideo = async (text) => {
-    // Codifica el texto para que funcione con emojis o espacios
-    const encodedText = encodeURIComponent(text)
-    const response = await axios.get(`https://brayan-api.vercel.app/maker/bratvid?text=${encodedText}`, {
-        responseType: 'arraybuffer'
-    })
-    if (!response.data) throw new Error('Error al obtener el video desde la API de Brayan.')
-    return response.data
-}
+let handler = m => m
 
-let handler = async (m, { conn, text }) => {
-    // Si el mensaje es respuesta a otro texto, usar ese
-    if (m.quoted && m.quoted.text) {
-        text = m.quoted.text
-    } else if (!text) {
-        return conn.sendMessage(m.chat, {
-            text: '✨ *Por favor, escribe o responde a un mensaje con el texto para crear el sticker.*'
-        }, { quoted: m })
+handler.all = async function (m) {
+  let chat = global.db.data.chats[m.chat]
+  let user = global.db.data.users[m.sender]
+
+  if (chat.autosticker && m.isGroup) {
+    let q = m
+    let stiker = false
+    let mime = (q.msg || q).mimetype || q.mediaType || ''
+
+    if (/webp/g.test(mime)) return
+
+    if (/image/g.test(mime)) {
+      let img = await q.download?.()
+      if (!img) return
+      stiker = await sticker(img, false, packname, author)
+
+    } else if (/video/g.test(mime)) {
+      if ((q.msg || q).seconds > 8)
+        return await m.reply('᥀·࣭࣪̇˖🚩◗ *El video no debe de durar más de 7 segundos, intentalo de nuevo.*')
+
+      let vid = await q.download()
+      if (!vid) return
+      stiker = await sticker(vid, false, packname, author)
+
+    } else if (m.text.split(/\n| /i)[0]) {
+      if (isUrl(m.text)) {
+        stiker = await sticker(false, m.text.split(/\n| /i)[0], packname, author)
+      } else return
     }
 
-    // Obtener info del pack
-    let userId = m.sender
-    let packstickers = global.db.data.users[userId] || {}
-    let texto1 = packstickers.text1 || global.packsticker
-    let texto2 = packstickers.text2 || global.packsticker2
-
-    try {
-        const videoBuffer = await fetchStickerVideo(text)
-        const stickerBuffer = await sticker(videoBuffer, null, texto1, texto2)
-        await conn.sendMessage(m.chat, { sticker: stickerBuffer }, { quoted: m })
-    } catch (e) {
-        console.error(e)
-        await conn.sendMessage(m.chat, {
-            text: `⚠️ Ocurrió un error al generar el sticker:\n${e.message}`
-        }, { quoted: m })
+    if (stiker) {
+      await conn.sendMessage(m.chat, {
+        sticker: stiker
+      }, { quoted: m })
     }
-}
+  }
 
-handler.help = ['notavid <texto>']
-handler.tags = ['sticker']
-handler.command = ['nvid', 'notavid']
+  return!0
+}
 
 export default handler
+
+const isUrl = (text) => {
+  return text.match(
+    /^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&/=]*)(jpe?g|gif|png|mp4)/gi
+  )
+}

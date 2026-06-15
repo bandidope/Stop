@@ -1,29 +1,29 @@
-const handler = async (m, {isOwner, isAdmin, conn, text, participants, args, command}) => {
+const handler = async (m, { isOwner, isAdmin, conn, text, participants, args, command, usedPrefix }) => {
+  if (usedPrefix == 'a' || usedPrefix == 'A') return;
+
+  const customEmoji = global.db.data.chats[m.chat]?.customEmoji || '🍖';
+  m.react(customEmoji);
+
   if (!(isAdmin || isOwner)) {
     global.dfail('admin', m, conn);
     throw false;
-    var sum = member.length;
-  } else {
-    var sum = 0;
-    const total = 0;
-    var member = 0;
   }
-  const pesan = args.join``;
-  const oi = `${pesan}`;
-  let emot = `${pickRandom(['*Storm Bot*'])}`
-function pickRandom(list) {
-return list[Math.floor(list.length * Math.random())]
-}
-  let teks = `╭─────────\n│❏ *Storm Bot Te Invoca 😮‍💨*\n│❏ ${emot} *Lovers*: *${participants.length}* ${oi}\n│❏ *Goza Tu Retirooo 🤐*\n│\n`;
+
+  const pesan = args.join` `;
+  const oi = `*» INFO :* ${pesan}`;
+  let teks = `*!  MENCION GENERAL  !*\n  *PARA ${participants.length} MIEMBROS* 🗣️\n\n ${oi}\n\n╭  ┄ 𝅄 ۪꒰ \`⡞᪲=͟͟͞Jackson 🇦🇱 ≼᳞ׄ\` ꒱ ۟ 𝅄 ┄\n`;
   for (const mem of participants) {
-    teks += `│• @${mem.id.split('@')[0]}\n`;
+    teks += `┊${customEmoji} @${mem.id.split('@')[0]}\n`;
   }
-  teks += `│\n╰Pᴏᴡᴇʀᴇᴅ Bʏ Tᴇᴀᴍ Nɪɢʜᴛᴡɪsʜ 🌀`;
-  conn.sendMessage(m.chat, {text: teks, mentions: participants.map((a) => a.id)} );
+  teks += `╰⸼ ┄ ┄ ┄ ─  ꒰  ׅ୭ *Jackson Storm* ୧ ׅ ꒱  ┄  ─ ┄ ⸼`;
+
+  conn.sendMessage(m.chat, { text: teks, mentions: participants.map((a) => a.id) });
 };
-handler.help = ['Todos <mesaje>', 'invocar <mesaje>'];
+
+handler.help = ['todos *<mensaje opcional>*'];
 handler.tags = ['group'];
-handler.command = /^(tagall|invocar|marcar|todos|invocación|ta)$/i;
+handler.command = ['todos', 'invocar', 'tagall']
 handler.admin = true;
 handler.group = true;
+
 export default handler;

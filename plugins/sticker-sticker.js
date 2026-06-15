@@ -18,15 +18,10 @@ let handler = async (m, { conn, args, usedPrefix, command }) => {
       let img = await q.download?.()
       if (!img) {
         return conn.reply(m.chat,
-`╭─〔 🇦🇱 𝐒𝐭𝐨𝐫𝐦 𝐁𝐨𝐭 🇦🇱 〕─╮
-│
-│ ❌ *ERROR DE SISTEMA:*
+`│ ❌ *ERROR DE SISTEMA:*
 │    No se pudo procesar el sticker.
-│
 │ 📌 *Asegúrate de enviar media*
-│    o un link directo de imagen.
-│
-╰───────────────────────────╯`, m)
+│    o un link directo de imagen.`, m)
       }
 
       let out
@@ -58,16 +53,9 @@ let handler = async (m, { conn, args, usedPrefix, command }) => {
       conn.sendFile(m.chat, stiker, 'sticker.webp', '', m)
     } else {
       return conn.reply(m.chat,
-`╭─〔 🇦🇱 𝐒𝐭𝐨𝐫𝐦 𝐁𝐨𝐭 🇦🇱 〕─╮
-│
-│ ✨ *CREADOR DE STICKERS*
-│
-│ 🖼️ *Responde a una imagen*
+`│ 🖼️ *Responde a una imagen*
 │ 🎥 *Responde a un video (15s)*
-│ 🔗 *O usa un enlace directo*
-│
-│ 🛠️ *Uso:* ${usedPrefix + command}
-╰────────────────────────────╯`, m)
+│ 🔗 *O usa un enlace directo*`, m)
     }
   }
 }

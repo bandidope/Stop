@@ -26,7 +26,7 @@ const menuFooter = `
 ╭─❒ 「 💻 SISTEMA ⚡ 」
 │ 🤖 *Jackson Storm*
 │ 🛠️ Usa el prefijo para ejecutar comandos
-│ 🌐 Creado por bxnja 
+│ 🌐 Creado por yallico
 ╰❒
 `.trim();
 
@@ -55,8 +55,8 @@ const handler = async (m, { conn, usedPrefix }) => {
 
     // Puedes colocar aquí tus imágenes estándar (no navideñas)
     const imgRandom = [
- "https://cdn.adoolab.xyz/dl/de20913b.jpg", 
-  "https://cdn.adoolab.xyz/dl/de20913b.jpg"
+    "https://cdn.adoolab.xyz/dl/de20913b.jpg", 
+    "https://cdn.adoolab.xyz/dl/de20913b.jpg"
     ].getRandom();
 
     let thumbnailBuffer;
@@ -74,7 +74,7 @@ const handler = async (m, { conn, usedPrefix }) => {
         locationMessage: {
           name: text,
           jpegThumbnail: thumbnailBuffer,
-          vcard: "BEGIN:VCARD\nVERSION:3.0\nN:;JacksonBot;;;\nFN:JacksonBot\nORG: JacksonBot\nEND:VCARD"
+          vcard: "BEGIN:VCARD\nVERSION:3.0\nN:;KingBot;;;\nFN:KingBot\nORG:KingBot\nEND:VCARD"
         }
       },
       participant: "0@s.whatsapp.net"
@@ -105,7 +105,9 @@ const handler = async (m, { conn, usedPrefix }) => {
     }).join('\n\n');
 
     const header = `
-╭─ 「 Jackson Storm 」
+${saludo} ${tagUsuario} 👋
+
+╭─ 「 𝙏𝙝𝙚 𝙆𝙞𝙣𝙜'𝙨 𝘽𝙤𝙩 👾 」
 │ 👤 Usuario: ${userName}
 │ 📈 Nivel: ${level} | XP: ${exp - min}/${xp}
 │ 💎 Gemas del rey: ${limit}

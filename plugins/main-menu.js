@@ -48,9 +48,9 @@ const handler = async (m, { conn, usedPrefix }) => {
     const userName = (await conn.getName?.(m.sender)) || tagUsuario;
 
     const text = [
-      "The King's System",
-      "Dynamic Menu",
-      "Bot Interface"
+      "Comprar Bot",
+      "+51 936 994 155",
+      "Bot Jackson"
     ].getRandom();
 
     // Puedes colocar aquí tus imágenes estándar (no navideñas)
@@ -105,9 +105,7 @@ const handler = async (m, { conn, usedPrefix }) => {
     }).join('\n\n');
 
     const header = `
-${saludo} ${tagUsuario} 👋
-
-╭─ 「 𝙏𝙝𝙚 𝙆𝙞𝙣𝙜'𝙨 𝘽𝙤𝙩 👾 」
+╭─ 「 Jackson Storm」
 │ 👤 Usuario: ${userName}
 │ 📈 Nivel: ${level} | XP: ${exp - min}/${xp}
 │ 💎 Gemas del rey: ${limit}

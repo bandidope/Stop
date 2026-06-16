@@ -1,6 +1,7 @@
 import { xpRange } from '../lib/levelling.js';
 import axios from 'axios';
 
+// Utilidad para convertir milisegundos en formato hh:mm:ss
 const clockString = ms => {
   const h = Math.floor(ms / 3600000);
   const m = Math.floor(ms / 60000) % 60;
@@ -8,26 +9,28 @@ const clockString = ms => {
   return [h, m, s].map(v => v.toString().padStart(2, '0')).join(':');
 };
 
+// Saludo dinámico según la hora
 const saludarSegunHora = () => {
   const hora = new Date().getHours();
-  if (hora >= 5 && hora < 12) return '🌅 ¡𝖡𝗎𝖾𝗇𝗈𝗌 𝖽𝗂́𝖺𝗌!';
-  if (hora >= 12 && hora < 19) return '☀️ ¡𝖡𝗎𝖾𝗇𝗈𝗌 𝗍𝖺𝗋𝖽𝖾𝗌!';
-  return '🌙 ¡𝖡𝗎𝖾𝗇𝖺𝗌 𝗇𝗈𝖼𝗁𝖾𝗌!';
+  if (hora >= 5 && hora < 12) return '🌅 ¡Buenos días!';
+  if (hora >= 12 && hora < 19) return '☀️ ¡Buenas tardes!';
+  return '🌙 ¡Buenas noches!';
 };
 
-// Imagen proporcionada y diseño de Vans
-const imgVans = 'https://cdn.adoolab.xyz/dl/de20913b.jpg';
-const borderTop = '╭╾━━━━╼ 〔 👟 〕 ╾━━━━╼╮';
-const borderBottom = '╰╾━━━━╼ 〔 🛸 〕 ╾━━━━╼╯';
+// Imagen de respaldo y separadores
+const img = 'https://files.catbox.moe/qqaj1o.jpg';
+const sectionDivider = '╰━━━━━━━━━━━━━━━━━━⭓';
 
+// Pie de menú profesional
 const menuFooter = `
-${borderTop}
-│  🛸 *Jackson Storm*
-│  🛠️ *𝖡𝗒 Whois*
-│  🛹 *Team Nightwish*
-${borderBottom}
+╭─❒ 「 💻 SISTEMA ⚡ 」
+│ 🤖 **𝙏𝙝𝙚 𝙆𝙞𝙣𝙜's 𝘽𝙤𝙩 👾**
+│ 🛠️ Usa el prefijo para ejecutar comandos
+│ 🌐 Creado por bxnja 
+╰❒
 `.trim();
 
+// Extensión para obtener un elemento aleatorio
 Array.prototype.getRandom = function () {
   return this[Math.floor(Math.random() * this.length)];
 };
@@ -39,28 +42,39 @@ const handler = async (m, { conn, usedPrefix }) => {
     const { exp, level, limit } = user;
     const { min, xp } = xpRange(level, global.multiplier || 1);
     const totalUsers = Object.keys(global.db.data.users).length;
-    const mode = global.opts?.self ? '𝖯𝗋𝗂𝗏𝖺𝖽𝗈 🔒' : '𝖯𝗎́𝖻𝗅𝗂𝖼𝗈 🌍';
+    const mode = global.opts?.self ? 'Privado 🔒' : 'Público 🌍';
     const uptime = clockString(process.uptime() * 1000);
     const tagUsuario = `@${m.sender.split('@')[0]}`;
     const userName = (await conn.getName?.(m.sender)) || tagUsuario;
 
-    const adText = ["Storm System", "Whois Interface", "Jackson Bot"].getRandom();
+    const text = [
+      "The King's System",
+      "Dynamic Menu",
+      "Bot Interface"
+    ].getRandom();
+
+    // Puedes colocar aquí tus imágenes estándar (no navideñas)
+    const imgRandom = [
+      "https://cdn.adoolab.xyz/dl/de20913b.jpg", 
+      "https://cdn.adoolab.xyz/dl/de20913b.jpg"
+    ].getRandom();
 
     let thumbnailBuffer;
     try {
-      const response = await axios.get(imgVans, { responseType: 'arraybuffer' });
+      const response = await axios.get(imgRandom, { responseType: 'arraybuffer' });
       thumbnailBuffer = Buffer.from(response.data);
-    } catch {
-      thumbnailBuffer = Buffer.alloc(0);
+    } catch (e) {
+      const fallback = await axios.get(img, { responseType: 'arraybuffer' });
+      thumbnailBuffer = Buffer.from(fallback.data);
     }
 
-    const fkontak = {
-      key: { participants: "0@s.whatsapp.net", fromMe: false, id: "Whois" },
+    const izumi = {
+      key: { participants: "0@s.whatsapp.net", fromMe: false, id: "KingBot" },
       message: {
         locationMessage: {
-          name: adText,
+          name: text,
           jpegThumbnail: thumbnailBuffer,
-          vcard: "BEGIN:VCARD\nVERSION:3.0\nN:;Yallico;;;\nFN:Whois\nORG:Bot\nEND:VCARD"
+          vcard: "BEGIN:VCARD\nVERSION:3.0\nN:;KingBot;;;\nFN:KingBot\nORG:KingBot\nEND:VCARD"
         }
       },
       participant: "0@s.whatsapp.net"
@@ -76,44 +90,47 @@ const handler = async (m, { conn, usedPrefix }) => {
         cmds.forEach(cmd => categorizedCommands[tag].add(usedPrefix + cmd));
       });
 
+    // Emojis de categoría actualizados
     const categoryEmojis = {
-      anime: '🌸', info: '📢', search: '🔍', diversión: '🎢', subbots: '🤖',
-      rpg: '🛹', registro: '📝', sticker: '🎨', imagen: '📸', logo: '🖋️',
-      premium: '🎟️', configuración: '⚙️', descargas: '📥', herramientas: '🔧',
-      nsfw: '🔞', 'base de datos': '📁', audios: '🎧', freefire: '🔫', otros: '🧩'
+      anime: '🎭', info: 'ℹ️', search: '🔍', diversión: '🎮', subbots: '🤖',
+      rpg: '⚔️', registro: '📝', sticker: '🏷️', imagen: '🖼️', logo: '🎨',
+      premium: '💎', configuración: '⚙️', descargas: '📥', herramientas: '🛠️',
+      nsfw: '🔞🔥', 'base de datos': '🗄️', audios: '🎵', freefire: '🔫', otros: '📂💾'
     };
 
     const menuBody = Object.entries(categorizedCommands).map(([title, cmds]) => {
-      const emoji = categoryEmojis[title.toLowerCase()] || '👟';
-      const list = [...cmds].map(cmd => `│  ◦ ${cmd}`).join('\n');
-      return `╭╾━━━━╼ 〔 ${emoji} ${title.toUpperCase()} 〕\n${list}\n╰╾━━━━╼ 〔 🛸 〕`;
+      const emoji = categoryEmojis[title.toLowerCase()] || '🔹';
+      const list = [...cmds].map(cmd => `│ ◦ ${cmd}`).join('\n');
+      return `╭─「 ${emoji} ${title.toUpperCase()} 」\n${list}\n${sectionDivider}`;
     }).join('\n\n');
 
     const header = `
-*Hola ${saludo} Un Gusto ${tagUsuario} 👋*
+${saludo} ${tagUsuario} 👋
 
-${borderTop}
-│  👟 *Jackson Storm*
-│  👤 *𝖴𝗌𝗎𝖺𝗋𝗂𝗈:* ${userName}
-│  📈 *𝖭𝗂𝗏𝖾𝗅:* ${level}
-│  ✨ *𝖤𝗑𝗉:* ${exp - min}/${xp}
-│  🎫 *𝖳𝗂𝖼𝗄𝖾𝗍𝗌:* ${limit}
-│  ⏳ *𝖴𝗉𝗍𝗂𝗆𝖾:* ${uptime}
-│  👥 *𝖴𝗌𝗎𝖺𝗋𝗂𝗈𝗌:* ${totalUsers}
-${borderBottom}
+╭─ 「 𝙏𝙝𝙚 𝙆𝙞𝙣𝙜'𝙨 𝘽𝙤𝙩 👾 」
+│ 👤 Usuario: ${userName}
+│ 📈 Nivel: ${level} | XP: ${exp - min}/${xp}
+│ 💎 Gemas del rey: ${limit}
+│ 🕹️ Modo: ${mode}
+│ ⏳ Actividad: ${uptime}
+│ 👥 Usuarios: ${totalUsers}
+╰─❒
 `.trim();
 
     const fullMenu = `${header}\n\n${menuBody}\n\n${menuFooter}`;
 
+    const botSettings = global.db.data.settings?.[conn.user.jid] || {};
+    const bannerr = botSettings.banner || img;
+
     await conn.sendMessage(m.chat, {
-      image: { url: imgVans },
+      image: { url: bannerr },
       caption: fullMenu,
       mentions: [m.sender]
-    }, { quoted: fkontak });
+    }, { quoted: izumi });
 
   } catch (e) {
     console.error('❌ Error en el menú:', e);
-    await conn.reply(m.chat, `⚠️ 𝖤𝗋𝗋𝗈𝗋 𝖺𝗅 𝖼𝖺𝗋𝗀𝖺𝗋 𝖾𝗅 𝗆𝖾𝗇𝗎́.`, m);
+    await conn.reply(m.chat, `⚠️ Ocurrió un error al cargar el menú.\n> ${e.message}`, m);
   }
 };
 
